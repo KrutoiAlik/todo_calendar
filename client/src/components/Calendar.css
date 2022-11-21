@@ -1,0 +1,15 @@
+.calendar {
+    min-width: 1200px;
+    min-height: 80vh;
+    background: white;
+    border-radius: 10px;
+}
+
+.tasks {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.task {
+    font-size: 14px;
+}
