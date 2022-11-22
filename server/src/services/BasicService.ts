@@ -1,14 +1,23 @@
 import {ServerResponse} from "http";
 
-interface BasicService {
+abstract class BasicService {
 
-    get(params: any, res: ServerResponse): ServerResponse;
 
-    post(params: any, res: ServerResponse): ServerResponse;
+    async get(params: any, res: ServerResponse): Promise<ServerResponse> {
+        return res;
+    };
 
-    put(params: any, res: ServerResponse): ServerResponse;
+    async post(params: any, res: ServerResponse): Promise<ServerResponse> {
+        return res;
+    };
 
-    delete(params: any, res: ServerResponse): ServerResponse;
+    async put(params: any, res: ServerResponse): Promise<ServerResponse> {
+        return res;
+    };
+
+    async delete(params: any, res: ServerResponse): Promise<ServerResponse> {
+        return res;
+    };
 }
 
 export {

@@ -2,7 +2,7 @@ import {Task} from "../entities/Task";
 import {BasicService} from "./BasicService";
 import {ServerResponse} from "http";
 
-class TaskService implements BasicService {
+class TaskService extends BasicService {
 
     public getTask(id: string) {
 
@@ -33,11 +33,7 @@ class TaskService implements BasicService {
         // TODO: delete task in DB by changed fields
     }
 
-    delete(params: any, res: ServerResponse): ServerResponse {
-        return res;
-    }
-
-    get(params: any, res: ServerResponse): ServerResponse {
+    async get(params: any, res: ServerResponse) {
 
         let body = '';
 
@@ -53,7 +49,7 @@ class TaskService implements BasicService {
         return res;
     }
 
-    post(params: any, res: ServerResponse): ServerResponse {
+    async post(params: any, res: ServerResponse) {
 
         const body = params.body;
 
@@ -62,10 +58,6 @@ class TaskService implements BasicService {
         res.writeHead(200, 'Success');
         res.end(JSON.stringify(body));
 
-        return res;
-    }
-
-    put(params: any, res: ServerResponse): ServerResponse {
         return res;
     }
 }

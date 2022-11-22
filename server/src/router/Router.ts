@@ -1,13 +1,13 @@
 import {TaskService} from '../services/TaskService';
 import {BasicService} from "../services/BasicService";
-import {IncomingMessage, ServerResponse} from "http";
 import {ProfileService} from "../services/ProfileService";
+import {IncomingMessage, ServerResponse} from "http";
 
 class Router {
 
     routes = new Map<string, BasicService>([
         ['/task', new TaskService()],
-        ['/user', new ProfileService()]
+        ['/profile', new ProfileService()]
     ]);
 
     getServer = (url: string) => {
@@ -28,12 +28,10 @@ class Router {
         const url: string = req.url || '';
         const service: BasicService | undefined = this.getServer(url);
 
-        console.log(url);
-        console.log({service});
-
         if (service === undefined) {
 
             // TODO: send error response
+            res.writeHead(404);
             res.end(`{"message": "Endpoint is not found"}`);
             return;
         }
@@ -50,7 +48,7 @@ class Router {
 
         } else if (req.method === 'POST') {
             this.handlePostRequest(req, res, service, (res, body) => {
-                service.post({body: body}, res);
+                service.post({data: JSON.parse(body)}, res);
             })
         }
 
