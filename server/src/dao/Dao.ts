@@ -1,4 +1,4 @@
-import {Database} from "sqlite3";
+import {Database, RunResult} from "sqlite3";
 
 const sqlite3 = require('sqlite3').verbose();
 const db_path = `${__dirname}\\..\\database\\sqlite.db`;
@@ -47,12 +47,12 @@ class Dao {
         });
     }
 
-    static async db_run(query: any){
+    static async db_run(query: any) {
 
         const db: Database = Dao.getInstance() as Database;
 
         return new Promise(function (resolve, reject) {
-            db.run(query, function (err: any, rows: any) {
+            db.run(query, function (this: RunResult, err: any) {
                 Dao.closeInstance();
 
                 if (err) {
@@ -60,7 +60,25 @@ class Dao {
                     return reject(err);
                 }
 
-                resolve(rows);
+                resolve(this.lastID);
+            });
+        });
+    }
+
+    static async db_get(query: any) {
+
+        const db: Database = Dao.getInstance() as Database;
+
+        return new Promise(function (resolve, reject) {
+            db.get(query, function (err: any, row: any) {
+                Dao.closeInstance();
+
+                if (err) {
+                    console.log("promise rejected")
+                    return reject(err);
+                }
+
+                resolve(row);
             });
         });
     }

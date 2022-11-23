@@ -3,13 +3,15 @@ class Task {
     id: string;
     title: string;
     description: string;
-    date: Date;
+    task_date: Date;
+    userId: string;
 
-    constructor(id: string, title: string, description: string, date: Date) {
+    constructor(id: string, title: string, description: string, task_date: Date, userId: string) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.date = date;
+        this.task_date = task_date;
+        this.userId = userId;
     }
 
     getTask() {
@@ -17,7 +19,8 @@ class Task {
             id: this.id,
             title: this.title,
             description: this.description,
-            date: this.date
+            task_date: this.task_date,
+            userId: this.userId
         }
     }
 }

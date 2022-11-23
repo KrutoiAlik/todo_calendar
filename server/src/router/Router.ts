@@ -30,11 +30,24 @@ class Router {
 
         if (service === undefined) {
 
-            // TODO: send error response
             res.writeHead(404);
             res.end(`{"message": "Endpoint is not found"}`);
             return;
         }
+
+        // TODO: session storage?
+        const cookies = req.headers["set-cookie"];
+
+        if (!cookies?.length
+            || !cookies.filter((cookie: string) => cookie.includes('userId')).length) {
+            res.writeHead(401);
+            res.end('Please log in');
+            return;
+        }
+
+        const userId = JSON.parse(cookies.filter(
+            cookie => cookie.includes('userId')
+        )[0]).userId;
 
         if (req.method === 'GET') {
 
@@ -44,18 +57,26 @@ class Router {
             // to get params, expected id or nothing
             const id: string = urlParts.length > 2 ? urlParts[urlParts.length - 1] : '';
 
-            service.get({id: id}, res);
+            service.get({id: id, userId: userId}, res);
 
         } else if (req.method === 'POST') {
-            this.handlePostRequest(req, res, service, (res, body) => {
-                service.post({data: JSON.parse(body)}, res);
+            this.handleBodyRequest(req, res, service, (res, body) => {
+                service.post({data: JSON.parse(body), userId: userId}, res);
+            })
+        } else if (req.method === 'PUT') {
+            this.handleBodyRequest(req, res, service, (res, body) => {
+                service.put({data: JSON.parse(body), userId: userId}, res);
+            })
+        } else if (req.method === 'DELETE') {
+            this.handleBodyRequest(req, res, service, (res, body) => {
+                service.delete({data: JSON.parse(body), userId: userId}, res);
             })
         }
 
         return res;
     }
 
-    handlePostRequest = (req: IncomingMessage,
+    handleBodyRequest = (req: IncomingMessage,
                          res: ServerResponse,
                          service: BasicService,
                          callback: (

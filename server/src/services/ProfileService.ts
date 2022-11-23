@@ -5,14 +5,41 @@ import {Profile} from "../entities/Profile";
 
 class ProfileService extends BasicService {
 
+    public async getUser(params: any = {}) {
+
+        let whereQuery = '';
+
+        for (const property in params) {
+            whereQuery += `${property} = '${params[property]}'`;
+        }
+
+        return await Dao.db_get(`SELECT name FROM profiles WHERE ${whereQuery}`) as Profile;
+    }
+
+    /**
+     * @author aleksei bezmoshchuk (alikbezmoshyk@gmail.com)
+     * @description Get a profile(s) according to params.
+     * @param params - If params contain 'id' property, return the selected profile. Otherwise -> all profiles.
+     * @param res - server response
+     */
     async get(params: any, res: ServerResponse): Promise<ServerResponse> {
 
         try {
 
-            const rows: Profile[] = await Dao.db_all('SELECT * FROM profiles') as Profile[];
-
-            res.writeHead(200);
-            res.end(JSON.stringify(rows));
+            if (!params.id || params.id === '') {
+                const rows: Profile[] = await Dao.db_all('SELECT id, name FROM profiles') as Profile[];
+                res.writeHead(200);
+                res.end(JSON.stringify(rows));
+            } else {
+                const user = this.getUser({id: params.id});
+                if (user) {
+                    res.writeHead(200);
+                    res.end(JSON.stringify(user));
+                } else {
+                    res.writeHead(404);
+                    res.end('No such a profile');
+                }
+            }
         } catch (err: any) {
             res.writeHead(500); // add error handling
             res.end(`Something went wrong ${err.message}`);
@@ -21,6 +48,12 @@ class ProfileService extends BasicService {
         return res;
     }
 
+    /**
+     * @author aleksei bezmoshchuk (alikbezmoshyk@gmail.com)
+     * @description Create a new profile.
+     * @param params - should contain data
+     * @param res - server response
+     */
     async post(params: any, res: ServerResponse): Promise<ServerResponse> {
 
         try {
@@ -37,12 +70,6 @@ class ProfileService extends BasicService {
 
         return res;
     }
-
-    async put(params: any, res: ServerResponse): Promise<ServerResponse> {
-        return res;
-    }
-
-
 }
 
 export {
