@@ -1,15 +1,18 @@
 .calendar {
-    min-width: 1200px;
-    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    min-width: 1800px;
+    min-height: 92vh;
     background: white;
     border-radius: 10px;
+    padding: 20px;
 }
 
-.tasks {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+.calendar__data {
+    min-width: 1200px;
 }
 
-.task {
-    font-size: 14px;
+.border__line {
+    margin: 10px 0;
+    border: 1px solid lightgray;
 }

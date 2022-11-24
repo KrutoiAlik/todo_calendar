@@ -1,0 +1,37 @@
+.months {
+    position: relative;
+    padding: 0 30px;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-gap: 5px;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 32px;
+    opacity: 0.8;
+}
+
+.month {
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.month:hover {
+    background: #dedafb;
+}
+
+.month.selected {
+    background: #dedafb;
+}
+
+.btn {
+    border: none;
+    background: inherit;
+    position: absolute;
+    font-size: 22px;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.btn.btn__right {
+    right: 0;
+}

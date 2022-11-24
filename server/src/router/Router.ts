@@ -35,19 +35,16 @@ class Router {
             return;
         }
 
+        // if(!req.headers.cookie || !JSON.parse(req.headers["cookie"] as string)?.userId){
+        //
+        //     res.writeHead(401);
+        //     res.end(`{"message": "Unauthorized access"}`);
+        //     return;
+        // }
+
         // TODO: session storage?
-        const cookies = req.headers["set-cookie"];
-
-        if (!cookies?.length
-            || !cookies.filter((cookie: string) => cookie.includes('userId')).length) {
-            res.writeHead(401);
-            res.end('Please log in');
-            return;
-        }
-
-        const userId = JSON.parse(cookies.filter(
-            cookie => cookie.includes('userId')
-        )[0]).userId;
+        // const cookies = JSON.parse(req.headers["cookie"] as string);
+        const cookies = {userId: '1'}; // remove after resolving cors policy issue
 
         if (req.method === 'GET') {
 
@@ -57,20 +54,25 @@ class Router {
             // to get params, expected id or nothing
             const id: string = urlParts.length > 2 ? urlParts[urlParts.length - 1] : '';
 
-            service.get({id: id, userId: userId}, res);
+            service.get({id: id, userId: cookies.userId}, res);
 
         } else if (req.method === 'POST') {
             this.handleBodyRequest(req, res, service, (res, body) => {
-                service.post({data: JSON.parse(body), userId: userId}, res);
+                service.post({data: JSON.parse(body), userId: cookies.userId}, res);
             })
         } else if (req.method === 'PUT') {
             this.handleBodyRequest(req, res, service, (res, body) => {
-                service.put({data: JSON.parse(body), userId: userId}, res);
+                service.put({data: JSON.parse(body), userId: cookies.userId}, res);
             })
         } else if (req.method === 'DELETE') {
             this.handleBodyRequest(req, res, service, (res, body) => {
-                service.delete({data: JSON.parse(body), userId: userId}, res);
+                service.delete({data: JSON.parse(body), userId: cookies.userId}, res);
             })
+        } else {
+            res.writeHead(204, {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'OPTIONS, POST, GET, PUT, DELETE'
+            });
         }
 
         return res;

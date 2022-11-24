@@ -40,7 +40,7 @@ class TaskService extends BasicService {
             const tasks: Task[] = await this.getAllTasks(params.userId) as Task[] || [];
 
             res.writeHead(200);
-            res.end(JSON.stringify(tasks));
+            res.end(JSON.stringify(tasks.length ? tasks : [tasks]));
         } else {
             const task: Task = await this.getTask(params.id) as Task;
 
