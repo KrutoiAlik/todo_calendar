@@ -15,7 +15,7 @@ export default class RequestService {
 
             return await response.json();
         } catch (err) {
-            console.log({err});
+            // console.log({err});
         }
 
         return [];

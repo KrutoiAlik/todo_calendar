@@ -1,0 +1,65 @@
+.day {
+    text-align: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.day__body {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    min-width: 1400px;
+}
+
+.day__sidebar {
+    margin: 5px 0;
+}
+
+.day__sidebar h3 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.day__date {
+    font-size: 18px;
+    background: #f2f2f2;
+    padding: 2px 5px;
+}
+
+.day__date:before {
+    content: "📅";
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    margin-right: 5px;
+}
+
+.actions .btn {
+    border: 2px solid #f2f2f2;
+    background: white;
+    border-radius: 2px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.actions .btn-add:hover {
+    background: #d9eff9;
+}
+
+.actions .btn-edit:hover {
+    background: #c6f2ff;
+}
+
+.actions .btn-delete:hover {
+    background: #ff9f9f;
+}
+
+.actions .btn-complete:hover {
+    background: #e4fac2;
+}

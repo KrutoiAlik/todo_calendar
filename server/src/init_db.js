@@ -16,6 +16,7 @@ db.serialize(() => {
             'id integer primary key, ' +
             'userId integer NOT NULL, ' +
             'title string NOT NULL, ' +
+            'status string NOT NULL, ' +
             'task_date datetime NOT NULL, ' +
             'description string)')
         // .run(`INSERT INTO profiles(name) VALUES('Profile_1'), ('Profile_2')`)

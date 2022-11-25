@@ -22,16 +22,3 @@
 .month.selected {
     background: #dedafb;
 }
-
-.btn {
-    border: none;
-    background: inherit;
-    position: absolute;
-    font-size: 22px;
-    opacity: 0.7;
-    cursor: pointer;
-}
-
-.btn.btn__right {
-    right: 0;
-}

@@ -2,9 +2,6 @@
     display: flex;
     justify-content: center;
     min-width: 1800px;
-    min-height: 92vh;
-    background: white;
-    border-radius: 10px;
     padding: 20px;
 }
 

@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './Calendar.css';
-import Task from './Task';
 import RequestService from "../services/RequestService";
-import Day from "./Day";
-import Month from "./Month";
-import CalendarContent from "./CalendarContent";
+import CalendarContent from "../components/CalendarContent";
 
 const server_url = 'http://localhost:5000';
 
@@ -12,7 +9,7 @@ export default function Calendar() {
 
     const [tasks, setTasks] = useState([]);
     const [days, setDays] = useState([]);
-    const [currentDay, setDay] = useState(new Date().getDay());
+    const [currentDay] = useState(new Date().getDay());
     const [currentMonth, setMonth] = useState(new Date().getMonth() + 1);
     const [currentYear, setYear] = useState(new Date().getFullYear());
 
@@ -32,7 +29,6 @@ export default function Calendar() {
 
         const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
         const days = [];
-
         if (firstDayOfMonth.getDay() > 1) {
             for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
                 days.push({});
@@ -44,16 +40,20 @@ export default function Calendar() {
             dt.setDate(firstDayOfMonth.getDate() + i);
             days.push({
                 date: dt,
-                isHoliday: !!response[i]
+                isHoliday: !!+response[i] && dt.getDay() < 6 && dt.getDay() > 0 // do not show weekends (6 - saturday, 0 - sunday)
             });
         }
 
         setDays(days);
     }
 
+    // TODO: deal with fetch 2 times
     useEffect(() => {
-        fetchAllTasks();
-        fetchDays();
+        const loadData = async() => {
+            await fetchDays();
+            await fetchAllTasks();
+        }
+        loadData();
     }, [currentMonth, currentYear]);
 
     const changeMonth = (e, monthNumber) => {
@@ -63,7 +63,6 @@ export default function Calendar() {
 
     return (
         <div className='calendar'>
-            {/*TODO: Add sidebar with buttons*/}
             <CalendarContent days={days}
                              tasks={tasks}
                              currentDay={currentDay}
