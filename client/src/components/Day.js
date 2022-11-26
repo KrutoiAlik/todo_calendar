@@ -56,7 +56,9 @@ export default function Day(props) {
                             {props.tasks.length - MAX_LIMIT_NUMBER_MINI_TASKS} more...
                         </div>
                     }
-                    <button className='btn' onClick={addTask}>➕ Add Task</button>
+                    <div className='btn__group'>
+                        <button className='btn' onClick={addTask}>➕ Add Task</button>
+                    </div>
                 </div>
             }
             {isModalVisible &&

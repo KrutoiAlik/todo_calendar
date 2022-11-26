@@ -6,21 +6,9 @@ import './CalendarContent.css';
 export default function CalendarContent(props) {
 
     const getDayElements = () => {
-
-        // hardcoded data -> replace in future
-        const tasks = [{
-            title: 'Task 1'
-        }, {
-            title: 'Task 2'
-        }, {
-            title: 'Task 3'
-        }, {
-            title: 'Task 4'
-        }];
-
         return props.days.map((day, index) => <Day key={'day' + index}
                                                    day={day.date}
-                                                   tasks={tasks}
+                                                   tasks={day.tasks || []}
                                                    isHoliday={day.isHoliday}/>);
     }
 

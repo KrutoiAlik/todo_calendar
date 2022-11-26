@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
 import Day from "./pages/Day";
 import Login from "./pages/Login";
+import Task from "./pages/Task";
 
 function App() {
 
@@ -32,8 +33,7 @@ function App() {
                     <Route path='/calendar' element={<Calendar/>}/>
                     <Route path='/day/:date' element={<Day/>}/>
                     <Route path='/login' element={<Login/>}/>
-                    <Route path='/task' element={<Home/>}/>
-                    <Route path='/task/:id' element={<Home/>}/>
+                    <Route path='/task/:id' element={<Task/>}/>
                 </Routes>
             </div>
 

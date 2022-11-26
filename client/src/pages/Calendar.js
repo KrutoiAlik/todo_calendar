@@ -7,18 +7,32 @@ const server_url = 'http://localhost:5000';
 
 export default function Calendar() {
 
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState(new Map());
     const [days, setDays] = useState([]);
     const [currentDay] = useState(new Date().getDay());
     const [currentMonth, setMonth] = useState(new Date().getMonth() + 1);
     const [currentYear, setYear] = useState(new Date().getFullYear());
 
     const fetchAllTasks = async () => {
-        const response = await new RequestService().doGet({
+        const tasks = await new RequestService().doGet({
             url: `${server_url}/task`,
             userId: '1'
         });
-        setTasks(response);
+
+        const tasksByTime = new Map();
+        for (const task of tasks) {
+            const d = new Date(task.task_date);
+
+            const utcTime = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+
+            if(!tasksByTime.has(utcTime)){
+                tasksByTime.set(utcTime, []);
+            }
+
+            tasksByTime.get(utcTime).push(task);
+        }
+
+        setTasks(tasksByTime);
     }
 
     const fetchDays = async () => {
@@ -38,9 +52,12 @@ export default function Calendar() {
         for (let i = 0; i < response.length; i++) {
             const dt = new Date(firstDayOfMonth);
             dt.setDate(firstDayOfMonth.getDate() + i);
+
+            const utcTime = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
             days.push({
                 date: dt,
-                isHoliday: !!+response[i] && dt.getDay() < 6 && dt.getDay() > 0 // do not show weekends (6 - saturday, 0 - sunday)
+                isHoliday: !!+response[i] && dt.getDay() < 6 && dt.getDay() > 0, // do not show weekends (6 - saturday, 0 - sunday)
+                tasks: tasks.get(utcTime) || []
             });
         }
 
@@ -49,12 +66,12 @@ export default function Calendar() {
 
     // TODO: deal with fetch 2 times
     useEffect(() => {
-        const loadData = async() => {
-            await fetchDays();
-            await fetchAllTasks();
-        }
-        loadData();
+        fetchDays()
     }, [currentMonth, currentYear]);
+
+    useEffect(() => {
+        fetchAllTasks()
+    }, [])
 
     const changeMonth = (e, monthNumber) => {
         e.preventDefault();

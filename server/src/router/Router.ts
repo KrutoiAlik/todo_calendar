@@ -54,7 +54,7 @@ class Router {
             // to get params, expected id or nothing
             const id: string = urlParts.length > 2 ? urlParts[urlParts.length - 1] : '';
 
-            service.get({id: id, userId: cookies.userId}, res);
+            service.get({id: id, url: url, userId: cookies.userId}, res);
 
         } else if (req.method === 'POST') {
             this.handleBodyRequest(req, res, service, (res, body) => {
@@ -69,10 +69,8 @@ class Router {
                 service.delete({data: JSON.parse(body), userId: cookies.userId}, res);
             })
         } else {
-            res.writeHead(204, {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'OPTIONS, POST, GET, PUT, DELETE'
-            });
+            res.writeHead(204);
+            res.end();
         }
 
         return res;

@@ -6,18 +6,19 @@ import {Dao} from "../dao/Dao";
 class TaskService extends BasicService {
 
     async getTask(taskId: string): Promise<Task> {
-        return await Dao.db_get(`SELECT id, name FROM tasks WHERE id = '${taskId}'`) as Task;
+        return await Dao.db_get(`SELECT id, title, description, task_date 
+                                 FROM tasks WHERE id = '${taskId}'`) as Task;
     }
 
-    public async getAllTasks(userId: string): Promise<Task[]> {
-        return await Dao.db_get(`SELECT id, title, description, userId
-                                        FROM tasks WHERE userId = '${userId}'`) as Task[];
+    public async getAllTasks(params: any): Promise<Task[]> {
+        return await Dao.db_all(`SELECT id, title, description, userId, task_date
+                                 FROM tasks WHERE ${this.paramsToWhereQuery(params)}`) as Task[];
     }
 
     public async createTask(task: Task) {
         console.log({task})
         return await Dao.db_run(`INSERT INTO tasks(title,description,userId, task_date)
-                                        VALUES('${task.title}', '${task.description}', '${task.userId}', '${task.task_date}')`);
+                                 VALUES('${task.title}', '${task.description}', '${task.userId}', '${task.task_date}')`);
     }
 
     public async updateTask(task: Task | any) {
@@ -37,14 +38,26 @@ class TaskService extends BasicService {
     async get(params: any, res: ServerResponse) {
 
         if (params.id === '') {
-            const tasks: Task[] = await this.getAllTasks(params.userId) as Task[] || [];
+
+            const sqlConditions: any = {
+                userId: params.userId
+            };
+
+            if (params.url.includes('?')) {
+                const urlParams = params.url.substring(params.url.indexOf('?') + 1).split('&');
+                for (const urlParam of urlParams) {
+                    const condition = urlParam.split('=');
+                    sqlConditions[condition[0]] = `'${condition[1]}'`;
+                }
+            }
+
+            const tasks: Task[] = await this.getAllTasks(sqlConditions) || [];
 
             res.writeHead(200);
             res.end(JSON.stringify(tasks.length ? tasks : [tasks]));
         } else {
-            const task: Task = await this.getTask(params.id) as Task;
+            const task: Task = await this.getTask(params.id);
 
-            console.log(task)
             if (task) {
                 res.writeHead(200);
                 res.end(JSON.stringify(task));
@@ -99,6 +112,17 @@ class TaskService extends BasicService {
         res.end();
 
         return res;
+    }
+
+    paramsToWhereQuery(params: any): string {
+
+        let conditions = [];
+
+        for (const key in params) {
+            conditions.push(`${key} = ${params[key]}`);
+        }
+
+        return conditions.join(' and ');
     }
 }
 
