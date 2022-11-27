@@ -48,18 +48,22 @@
     cursor: pointer;
 }
 
-.actions .btn-add:hover {
+.actions .btn[disabled] {
+    cursor: initial;
+}
+
+.actions .btn-add:not([disabled]):hover {
     background: #d9eff9;
 }
 
-.actions .btn-edit:hover {
+.actions .btn-edit:not([disabled]):hover {
     background: #c6f2ff;
 }
 
-.actions .btn-delete:hover {
+.actions .btn-delete:not([disabled]):hover {
     background: #ff9f9f;
 }
 
-.actions .btn-complete:hover {
+.actions .btn-complete:not([disabled]):hover {
     background: #e4fac2;
 }

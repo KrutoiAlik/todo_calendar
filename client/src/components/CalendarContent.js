@@ -27,20 +27,32 @@ export default function CalendarContent(props) {
             <Month key={'month' + index}
                    monthNumber={index}
                    month={month}
-                   isCurrent={props.currentMonth - 1 === index}
-                   changeMonth={props.changeMonth}/>
+                   isCurrent={props.date?.month - 1 === index}
+                   changeMonth={(month) => {
+                       props.setDate(prev => {
+                           return {...prev, month: month + 1}
+                       });
+                   }}/>
         ));
+    }
+
+    const setYear = (year) => {
+        props.setDate(prev => {
+            return {...prev, year}
+        });
     }
 
     return (
         <div className='calendar__data'>
-            <h3 className="calendar__title">{props.currentYear}</h3>
+            <h3 className="calendar__title">{props.date?.year}</h3>
 
             <div className="months">
-                <button className='btn btn__left' onClick={(e) => props.setYear(prev => prev - 1)}>⯇</button>
+                <button className='btn btn__left'
+                        onClick={(e) => setYear(props.date.year - 1)}>⯇
+                </button>
                 {calendarMonthHeaders()}
                 <button className='btn btn__right'
-                        onClick={(e) => props.setYear(prev => prev + 1)}>⯈
+                        onClick={(e) => setYear(props.date.year + 1)}>⯈
                 </button>
             </div>
             <div className="border__line"></div>

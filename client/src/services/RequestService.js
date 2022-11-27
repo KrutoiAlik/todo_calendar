@@ -4,21 +4,35 @@ export default class RequestService {
 
         document.cookie = JSON.stringify({userId: '1'});
 
-        try {
+        const response = await fetch(`${params.url}`);
 
-            const response = await fetch(`${params.url}`);
-
-            // TODO: Handle any possible content type
-            if (response.headers.get('content-type') === 'text/plain') {
-                return await response.text();
-            }
-
-            return await response.json();
-        } catch (err) {
-            // console.log({err});
+        // TODO: Handle any possible content type
+        if (response.headers.get('content-type') === 'text/plain') {
+            return await response.text();
         }
 
-        return [];
+        return await response.json();
     }
 
+    doPost = async (params) => {
+        const response = await fetch(`${params.url}`, this.createInit('POST', params.body));
+
+        return await response.json();
+    }
+
+    doPut = async (params) => {
+        await fetch(`${params.url}`, this.createInit('PUT', params.body));
+    }
+
+    doDelete = async (params) => {
+        await fetch(`${params.url}`, this.createInit('DELETE', params.body));
+    }
+
+    createInit = (method, body) => {
+        return {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+        };
+    };
 }

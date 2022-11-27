@@ -11,7 +11,7 @@ export default function Month(props) {
 
     return (
         <div className={classes.join(' ')}
-             onClick={(e) => props.changeMonth(e, props.monthNumber)}>
+             onClick={(e) => props.changeMonth(props.monthNumber)}>
             {props.month}
         </div>
     );

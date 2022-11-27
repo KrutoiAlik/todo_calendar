@@ -86,6 +86,10 @@
     display: initial;
 }
 
+.day__card:hover .btn:hover {
+    background:#ebf9ff;
+}
+
 .tasks .btn:focus {
     outline: none;
 }
@@ -99,5 +103,10 @@
 
 .task__modal input {
     padding: 10px 20px;
+}
+
+.no_tasks__message {
+    font-size: 18px;
+    opacity: 0.7;
 }
 

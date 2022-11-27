@@ -12,6 +12,7 @@ export default function Day() {
     const [isModalVisible, showModal] = useState(false);
     const [modalHeader, setModalHeader] = useState('');
     const [modalView, setModalView] = useState('');
+    const [selectedTasks, setSelectedTasks] = useState(new Set());
 
     const {date} = useParams();
     const dateObj = new Date(+date);
@@ -36,9 +37,38 @@ export default function Day() {
         fetchTasks();
     }, []);
 
-    const getTaskElements = () => tasks.map((task, index) => (
-        <Task key={index} id={task.id} title={task.title} description={task.description} date={task.task_date}/>
-    ));
+    useEffect(() => {
+
+    }, [selectedTasks]);
+
+    const getTaskElements = () => {
+
+        if (!tasks.length) {
+            return (<span className='no_tasks__message'>No tasks have been assigned for this day</span>);
+        }
+
+        return tasks.map((task, index) => (
+            <Task key={index}
+                  id={task.id}
+                  title={task.title}
+                  description={task.description}
+                  date={task.task_date}
+                  handleCheck={(id, isSelected) => {
+
+                      if (!isSelected && selectedTasks.has(id)) {
+                          setSelectedTasks(prev => {
+                              prev.delete(id);
+                              return new Set([...Array.from(prev.values())])
+                          });
+                      }
+
+                      if (isSelected && !selectedTasks.has(id)) {
+                          setSelectedTasks(prev => new Set([...Array.from(prev.values()), id]));
+                      }
+                  }}
+            />
+        ));
+    }
 
     const addTask = () => {
         setModalHeader('Add Task');
@@ -53,15 +83,19 @@ export default function Day() {
     }
 
     const deleteTask = () => {
-        setModalHeader('Delete Task');
+        setModalHeader(`Delete Task${selectedTasks.size > 1 ? 's' : ''}`);
         setModalView('delete');
         showModal(true);
     }
 
     const completeTask = () => {
-        setModalHeader('Complete Task');
+        setModalHeader(`Complete Task${selectedTasks.size > 1 ? 's' : ''}`);
         setModalView('complete');
         showModal(true);
+    }
+
+    const selectedTaskObjects = () => {
+        return tasks.filter(task => selectedTasks.has(task.id));
     }
 
     return (
@@ -74,9 +108,22 @@ export default function Day() {
                 <div className='day__data'>
                     <div className='actions'>
                         <button className='btn btn-add' onClick={addTask}>➕ Add</button>
-                        <button className='btn btn-edit' onClick={editTask}>✎ Edit</button>
-                        <button className='btn btn-delete' onClick={deleteTask}>🗑 Delete</button>
-                        <button className='btn btn-complete' onClick={completeTask}>✔ Complete</button>
+
+                        <button className='btn btn-edit'
+                                onClick={editTask}
+                                disabled={!tasks.length || selectedTasks.size !== 1}>✎ Edit
+                        </button>
+
+                        <button className='btn btn-delete'
+                                onClick={deleteTask}
+                                disabled={!tasks.length || !selectedTasks.size}>🗑 Delete
+                        </button>
+
+                        <button className='btn btn-complete'
+                                onClick={completeTask}
+                                disabled={!tasks.length || !selectedTasks.size}>✔ Complete
+                        </button>
+
                     </div>
                     <div className='day__tasks'>
                         {getTaskElements()}
@@ -86,14 +133,9 @@ export default function Day() {
             {isModalVisible && <TaskModal hideModal={() => showModal(false)}
                                           header={modalHeader}
                                           view={modalView}
-                                          task={{
-                                              ...tasks[0],
-                                              task_date: new Date(Date.UTC(
-                                                  dateObj.getFullYear(),
-                                                  dateObj.getMonth(),
-                                                  dateObj.getDate()
-                                              ))
-                                          }}
+                                          date={dateObj}
+                                          task={modalView !== 'add' ? selectedTaskObjects()[0] : {}}
+                                          tasks={selectedTaskObjects()}
             />}
         </div>
     );

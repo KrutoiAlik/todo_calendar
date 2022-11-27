@@ -16,6 +16,7 @@
     min-width: 500px;
     cursor: initial;
     text-align: center;
+    border-radius: 3px;
 }
 
 .modal__body {
@@ -24,10 +25,17 @@
 }
 
 .modal__header h3 {
-    font-size: 24px;
+    font-family: 'Calibri', sans-serif;
+    font-size: 22px;
     font-weight: 400;
     line-height: 3rem;
     margin: 0;
+    opacity: 0.7;
+}
+
+.modal__body input {
+    border: 1px solid #c2c2c2;
+    border-radius: 2px;
 }
 
 .modal__footer {

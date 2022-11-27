@@ -16,7 +16,6 @@ class TaskService extends BasicService {
     }
 
     public async createTask(task: Task) {
-        console.log({task})
         return await Dao.db_run(`INSERT INTO tasks(title,description,userId, task_date)
                                  VALUES('${task.title}', '${task.description}', '${task.userId}', '${task.task_date}')`);
     }
@@ -31,10 +30,11 @@ class TaskService extends BasicService {
         return await Dao.db_run(`UPDATE tasks SET ${setQuery}`);
     }
 
-    public async deleteTask(taskId: string) {
-        return await Dao.db_run(`DELETE FROM tasks VALUES id = '${taskId}'`);
+    public async deleteTask(taskIds: string[]) {
+        return await Dao.db_run(`DELETE FROM tasks VALUES id IN ('${taskIds.join(',')}')`);
     }
 
+    // TODO: Make all requests receive a collection of items, not by one
     async get(params: any, res: ServerResponse) {
 
         if (params.id === '') {
@@ -54,7 +54,7 @@ class TaskService extends BasicService {
             const tasks: Task[] = await this.getAllTasks(sqlConditions) || [];
 
             res.writeHead(200);
-            res.end(JSON.stringify(tasks.length ? tasks : [tasks]));
+            res.end(JSON.stringify(tasks));
         } else {
             const task: Task = await this.getTask(params.id);
 
@@ -72,9 +72,8 @@ class TaskService extends BasicService {
 
     async post(params: any, res: ServerResponse) {
 
-        console.log({params});
-
         const task = {...params.data, userId: params.userId};
+
         let taskId = await this.createTask(task);
 
         if (taskId) {
@@ -106,7 +105,7 @@ class TaskService extends BasicService {
 
     async delete(params: any, res: ServerResponse) {
 
-        await this.deleteTask(params.data.taskId);
+        await this.deleteTask(params.data.ids);
 
         res.writeHead(204, 'Removed successfully');
         res.end();

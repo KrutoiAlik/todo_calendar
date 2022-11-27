@@ -4,7 +4,7 @@ import './Modal.css';
 export default function Modal(props) {
 
     return (
-        <div className='modal' onClick={(e) => e.stopPropagation()}>
+        <div className='modal'  onClick={(e) => e.stopPropagation()}>
             <div className='modal__content'>
 
                 <div className="modal__header">
@@ -15,7 +15,7 @@ export default function Modal(props) {
                 </div>
                 <div className="modal__footer">
                     <button className='btn' value="Close" onClick={props.close}>Close</button>
-                    <button className='btn btn-submit' value="Submit" onClick={props.close}>Submit</button>
+                    <button className='btn btn-submit' value="Submit" onClick={props.handleSubmit}>Submit</button>
                 </div>
             </div>
 

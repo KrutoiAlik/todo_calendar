@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import './Day.css';
 import {useNavigate} from "react-router-dom";
-import Modal from "./Modal";
+import TaskModal from "./TaskModal";
 
 export default function Day(props) {
 
@@ -46,30 +46,26 @@ export default function Day(props) {
     }
 
     return (
-        <div className={classes.join(' ')} onClick={() => navigate('/day/' + props.day?.getTime())}>
-            <div className='day__title'>{content}</div>
-            {!!props.day &&
-                <div className="tasks">
-                    {getTaskElements()}
-                    {props.tasks.length > MAX_LIMIT_NUMBER_MINI_TASKS &&
-                        <div className="show__all">
-                            {props.tasks.length - MAX_LIMIT_NUMBER_MINI_TASKS} more...
-                        </div>
-                    }
-                    <div className='btn__group'>
-                        <button className='btn' onClick={addTask}>➕ Add Task</button>
-                    </div>
-                </div>
-            }
+        <div>
             {isModalVisible &&
-                <Modal close={hideModal} header={'Add Task'} body={
-                    <form className='task__modal'>
-                        <input type='text' placeholder='Title'/>
-                        <input type='text' placeholder='Description'/>
-                        <input type='date' placeholder='Date' value={props.day}/>
-                    </form>
-                }/>
+                <TaskModal view='add' header='Add Task' hideModal={hideModal} date={props.day}/>
             }
+            <div className={classes.join(' ')} onClick={() => navigate('/day/' + props.day?.getTime())}>
+                <div className='day__title'>{content}</div>
+                {!!props.day &&
+                    <div className="tasks">
+                        {getTaskElements()}
+                        {props.tasks.length > MAX_LIMIT_NUMBER_MINI_TASKS &&
+                            <div className="show__all">
+                                {props.tasks.length - MAX_LIMIT_NUMBER_MINI_TASKS} more...
+                            </div>
+                        }
+                        <div className='btn__group'>
+                            <button className='btn' onClick={addTask}>➕ Add Task</button>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     );
 }

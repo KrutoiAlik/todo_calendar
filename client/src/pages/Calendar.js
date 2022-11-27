@@ -1,91 +1,114 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import './Calendar.css';
 import RequestService from "../services/RequestService";
 import CalendarContent from "../components/CalendarContent";
+import Spinner from "../components/Spinner";
 
 const server_url = 'http://localhost:5000';
 
 export default function Calendar() {
 
-    const [tasks, setTasks] = useState(new Map());
-    const [days, setDays] = useState([]);
-    const [currentDay] = useState(new Date().getDay());
-    const [currentMonth, setMonth] = useState(new Date().getMonth() + 1);
-    const [currentYear, setYear] = useState(new Date().getFullYear());
+    const tasksRef = useRef(new Map());
+    const daysRef = useRef([]);
+
+    const [isLoading, setLoading] = useState(true);
+    const [currentDate, setDate] = useState({
+        day: new Date().getUTCDate(),
+        month: new Date().getUTCMonth() + 1,
+        year: new Date().getUTCFullYear()
+    });
 
     const fetchAllTasks = async () => {
-        const tasks = await new RequestService().doGet({
+        const dbTasks = await new RequestService().doGet({
             url: `${server_url}/task`,
             userId: '1'
         });
 
         const tasksByTime = new Map();
-        for (const task of tasks) {
+        for (const task of dbTasks) {
             const d = new Date(task.task_date);
 
             const utcTime = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
 
-            if(!tasksByTime.has(utcTime)){
+            if (!tasksByTime.has(utcTime)) {
                 tasksByTime.set(utcTime, []);
             }
 
             tasksByTime.get(utcTime).push(task);
         }
 
-        setTasks(tasksByTime);
+        tasksRef.current = tasksByTime;
     }
 
-    const fetchDays = async () => {
+    const createDays = async () => {
 
-        const response = await new RequestService().doGet({
-            url: `https://isdayoff.ru/api/getdata?year=${currentYear}&month=${currentMonth}`
-        });
+        let response;
 
-        const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
+        try {
+            response = await new RequestService().doGet({
+                url: `https://isdayoff.ru/api/getdata?year=${currentDate.year}&month=${currentDate.month}`
+            });
+        } catch (err) {
+            console.error('IsDayOff is unavailable: ' + err.message);
+        }
+
+        const firstDayOfMonth = new Date(currentDate.year, currentDate.month - 1, 1);
+
+        // if the first day of month is not the Sunday -> add empty daysRef
         const days = [];
-        if (firstDayOfMonth.getDay() > 1) {
+        if (firstDayOfMonth.getDay() > 0) {
             for (let i = 0; i < firstDayOfMonth.getDay(); i++) {
                 days.push({});
             }
         }
 
-        for (let i = 0; i < response.length; i++) {
+        const daysInMonth = new Date(currentDate.year, currentDate.month, 0).getDate();
+
+        for (let i = 0; i < daysInMonth; i++) {
             const dt = new Date(firstDayOfMonth);
             dt.setDate(firstDayOfMonth.getDate() + i);
 
             const utcTime = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
+            const isWeekend = dt.getDay() < 6 && dt.getDay() > 0;
+            const isHoliday = response && !!+response[i] && isWeekend;
+
             days.push({
                 date: dt,
-                isHoliday: !!+response[i] && dt.getDay() < 6 && dt.getDay() > 0, // do not show weekends (6 - saturday, 0 - sunday)
-                tasks: tasks.get(utcTime) || []
+                isHoliday: isHoliday,
+                tasks: tasksRef.current.get(utcTime) || []
             });
         }
 
-        setDays(days);
+        daysRef.current = days;
+        console.log({days: daysRef.current})
     }
 
     // TODO: deal with fetch 2 times
     useEffect(() => {
-        fetchDays()
-    }, [currentMonth, currentYear]);
 
-    useEffect(() => {
-        fetchAllTasks()
-    }, [])
+        setLoading(true);
 
-    const changeMonth = (e, monthNumber) => {
-        e.preventDefault();
-        setMonth(monthNumber + 1);
-    }
+        const loadData = async () => {
+
+            if (tasksRef.current.size === 0) {
+                await fetchAllTasks();
+            }
+
+            await createDays();
+        }
+
+        loadData().then(() => setLoading(false));
+
+    }, [currentDate]);
 
     return (
         <div className='calendar'>
-            <CalendarContent days={days}
-                             tasks={tasks}
-                             currentDay={currentDay}
-                             currentMonth={currentMonth}
-                             currentYear={currentYear}
-                             setYear={setYear} changeMonth={changeMonth}/>
+            <Spinner show={isLoading}/>
+            {!isLoading &&
+                <CalendarContent days={daysRef.current}
+                                 date={currentDate}
+                                 setDate={setDate}/>
+            }
         </div>
     );
 }

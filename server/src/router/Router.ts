@@ -45,6 +45,7 @@ class Router {
         // TODO: session storage?
         // const cookies = JSON.parse(req.headers["cookie"] as string);
         const cookies = {userId: '1'}; // remove after resolving cors policy issue
+        console.log(req.method);
 
         if (req.method === 'GET') {
 

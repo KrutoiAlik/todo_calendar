@@ -2,24 +2,24 @@ import React from 'react';
 import './Task.css';
 import {useNavigate} from "react-router-dom";
 
-export default function Task({id, title, description, date}) {
+export default function Task(props) {
 
     const navigate = useNavigate();
 
     const toTaskDetailPage = () => {
-        navigate(`/task/${id}`);
+        navigate(`/task/${props.id}`);
     }
 
     return (
         <div className='task'>
             <h3 className='task__title'>
-                <input type='checkbox'/>
+                <input type='checkbox' onChange={(e) => props.handleCheck(props.id, e.target.checked)}/>
                 <span onClick={toTaskDetailPage}>
-                    {title}
+                    {props.title}
                 </span>
             </h3>
-            <p>Description: {description}</p>
-            <p>Date: {date}</p>
+            <p>Description: {props.description}</p>
+            <p>Date: {props.date}</p>
         </div>
     );
 }
