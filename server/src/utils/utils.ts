@@ -1,10 +1,9 @@
-class Http {
+export default class Utils {
 
-    static readonly GET: string = 'GET';
-    static readonly POST: string = 'POST';
-    static readonly PUT: string = 'PUT';
-    static readonly DELETE: string = 'DELETE';
-
+    static generateWhereConditionsString(params: any, joinWithOperator: string): string {
+        return Object.keys(params)
+            .filter(key => !!params[key])
+            .map(key => `${key} = ${params[key]}`)
+            .join(` ${joinWithOperator} `);
+    }
 }
-
-export { Http }

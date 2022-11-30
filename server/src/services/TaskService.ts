@@ -2,102 +2,107 @@ import {Task} from "../entities/Task";
 import {BasicService} from "./BasicService";
 import {ServerResponse} from "http";
 import {Dao} from "../dao/Dao";
+import Utils from "../utils/utils";
+import {Database, RunResult} from "sqlite3";
 
 class TaskService extends BasicService {
 
-    async getTask(taskId: string): Promise<Task> {
-        return await Dao.db_get(`SELECT id, title, description, task_date 
-                                 FROM tasks WHERE id = '${taskId}'`) as Task;
+    public async createTasks(tasks: Task[]): Promise<RunResult> {
+
+        const sqlTasks = tasks.map(task => `('${task.title}', '${task.description}', '${task.userId}', '${task.task_date}', 'todo')`);
+
+        return await Dao.db_run(`INSERT INTO tasks(title,description,userId, task_date, status)
+                                        VALUES ${sqlTasks.join(',')}`) as RunResult;
     }
 
-    public async getAllTasks(params: any): Promise<Task[]> {
-        return await Dao.db_all(`SELECT id, title, description, userId, task_date
-                                 FROM tasks WHERE ${this.paramsToWhereQuery(params)}`) as Task[];
+    public async getTasks(params: any) {
+        return await Dao.db_all(`SELECT id, title, description, userId, task_date 
+                                        FROM tasks
+                                        WHERE ${Utils.generateWhereConditionsString(params, 'and')}`);
     }
 
-    public async createTask(task: Task) {
-        return await Dao.db_run(`INSERT INTO tasks(title,description,userId, task_date)
-                                 VALUES('${task.title}', '${task.description}', '${task.userId}', '${task.task_date}')`);
+    public async updateTasks(tasks: Task[]) {
+
+        const db: Database = Dao.getInstance() as Database;
+
+        await Dao.massUpdate('tasks', tasks);
+
+        return await new Promise((resolve, reject) => {
+            db.all(
+                `SELECT id, title, description, task_date, status, userId 
+                      FROM tasks
+                      WHERE id IN (${tasks.map(task => task.id).join(', ')})`,
+                (err, rows) => {
+                    Dao.closeInstance();
+                    if (err) {
+                        reject(err);
+                    }
+
+                    resolve(rows);
+                }
+            );
+        })
     }
 
-    public async updateTask(task: Task | any) {
-
-        let setQuery = '';
-        for (const taskKey in task) {
-            setQuery += `${taskKey} = ${task[taskKey]}`;
-        }
-
-        return await Dao.db_run(`UPDATE tasks SET ${setQuery}`);
-    }
-
-    public async deleteTask(taskIds: string[]) {
+    public async deleteTasks(taskIds: string[]) {
         return await Dao.db_run(`DELETE FROM tasks VALUES id IN ('${taskIds.join(',')}')`);
     }
 
-    // TODO: Make all requests receive a collection of items, not by one
     async get(params: any, res: ServerResponse) {
 
-        if (params.id === '') {
+        const taskParams: any = {
+            id: params.id,
+            userId: params.userId
+        };
 
-            const sqlConditions: any = {
-                userId: params.userId
-            };
-
-            if (params.url.includes('?')) {
-                const urlParams = params.url.substring(params.url.indexOf('?') + 1).split('&');
-                for (const urlParam of urlParams) {
-                    const condition = urlParam.split('=');
-                    sqlConditions[condition[0]] = `'${condition[1]}'`;
-                }
-            }
-
-            const tasks: Task[] = await this.getAllTasks(sqlConditions) || [];
-
-            res.writeHead(200);
-            res.end(JSON.stringify(tasks));
-        } else {
-            const task: Task = await this.getTask(params.id);
-
-            if (task) {
-                res.writeHead(200);
-                res.end(JSON.stringify(task));
-            } else {
-                res.writeHead(404);
-                res.end(`No task found`);
+        if (params.url.includes('?')) {
+            const urlParams = params.url.substring(params.url.indexOf('?') + 1).split('&');
+            for (const urlParam of urlParams) {
+                const condition: string[] = urlParam.split('=');
+                taskParams[condition[0]] = `'${condition[1]}'`;
             }
         }
+
+        const tasks: Task[] = await this.getTasks(taskParams) as Task[];
+
+        if (!tasks.length) {
+            res.writeHead(404);
+            res.end(`No task found`);
+            return res;
+        }
+
+        res.writeHead(200);
+        res.end(JSON.stringify(tasks));
 
         return res;
     }
 
     async post(params: any, res: ServerResponse) {
 
-        const task = {...params.data, userId: params.userId};
+        const tasks = params.data.tasks.map((task: Task) => ({...task, userId: params.userId}));
 
-        let taskId = await this.createTask(task);
+        let result: RunResult = await this.createTasks(tasks);
 
-        if (taskId) {
-            res.writeHead(201, 'Success');
-            res.end(JSON.stringify({id: taskId, ...task}));
-        } else {
-            res.writeHead(409);
-            res.end('Insert is failed');
-        }
+        res.writeHead(200);
+        res.end();
 
         return res;
     }
 
     async put(params: any, res: ServerResponse) {
 
-        const task = {...params.data, userId: params.userId};
-        let taskId = await this.updateTask(task);
+        const tasks = params.data.tasks.map((task: Task) => ({...task, userId: params.userId}));
 
-        if (taskId) {
+        try {
+            let updatedTasks = await this.updateTasks(tasks);
+
+            console.log({updatedTasks})
+
             res.writeHead(204, 'Updated successfully');
-            res.end(JSON.stringify({id: taskId, ...task}));
-        } else {
+            res.end(JSON.stringify({updatedTasks}));
+        } catch (err: any) {
             res.writeHead(409);
-            res.end('Insert is failed');
+            res.end('Insert is failed: ' + err.message);
         }
 
         return res;
@@ -105,23 +110,12 @@ class TaskService extends BasicService {
 
     async delete(params: any, res: ServerResponse) {
 
-        await this.deleteTask(params.data.ids);
+        await this.deleteTasks(params.data.ids);
 
         res.writeHead(204, 'Removed successfully');
         res.end();
 
         return res;
-    }
-
-    paramsToWhereQuery(params: any): string {
-
-        let conditions = [];
-
-        for (const key in params) {
-            conditions.push(`${key} = ${params[key]}`);
-        }
-
-        return conditions.join(' and ');
     }
 }
 
