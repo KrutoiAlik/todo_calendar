@@ -1,20 +1,20 @@
-.task {
+.task-page {
     text-align: initial;
     width: 1400px;
     height: calc(100vh - 54px);
 }
 
-.task .task__header {
+.task-page .task__header {
     font-size: 22px;
     opacity: 0.7;
 }
 
-.task fieldset {
+.task-page fieldset {
     border: none;
     display: grid;
 }
 
-.task fieldset label {
+.task-page fieldset label {
     font-size: 14px;
     font-weight: 500;
     display: inline-block;
@@ -22,16 +22,16 @@
     padding: 5px 10px;
 }
 
-.task .task__fields fieldset label {
+.task-page .task__fields fieldset label {
     text-align: right;
     background: #eae9e9;
 }
 
-.task__attachments label {
+.task-page .task__attachments label {
     background: initial;
 }
 
-.task fieldset[disabled] .task__field {
+.task-page fieldset[disabled] .task__field {
     border: 0;
     background: inherit;
     padding: 5px 10px;

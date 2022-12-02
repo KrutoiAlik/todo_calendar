@@ -35,7 +35,7 @@ export default function Task() {
     }
 
     return (
-        <div className='task'>
+        <div className='task-page'>
             <div className='task__header'>
                 <h3>{task.title}</h3>
             </div>

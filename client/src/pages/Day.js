@@ -112,7 +112,7 @@ export default function Day() {
     }
 
     return (
-        <div className='day'>
+        <div className='day-page'>
 
             <Spinner show={isLoading}/>
 

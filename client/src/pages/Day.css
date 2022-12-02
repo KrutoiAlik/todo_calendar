@@ -1,46 +1,46 @@
-.day {
+.day-page {
     text-align: left;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.day__body {
+.day-page .day__body {
     margin-top: 20px;
     display: grid;
     grid-template-columns: 1fr 4fr;
     min-width: 1400px;
 }
 
-.day__sidebar {
+.day-page .day__sidebar {
     margin: 5px 0;
 }
 
-.day__sidebar h3 {
+.day-page .day__sidebar h3 {
     margin: 0;
     font-size: 26px;
 }
 
-.day__date {
+.day-page .day__date {
     font-size: 18px;
     background: #f2f2f2;
     padding: 2px 5px;
 }
 
-.day__date:before {
+.day-page .day__date:before {
     content: "📅";
     font-size: 16px;
     margin-right: 5px;
 }
 
-.actions {
+.day-page .actions {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
     margin-right: 5px;
 }
 
-.actions .btn {
+.day-page .actions .btn {
     border: 2px solid #f2f2f2;
     background: white;
     border-radius: 2px;
@@ -48,22 +48,22 @@
     cursor: pointer;
 }
 
-.actions .btn[disabled] {
+.day-page .actions .btn[disabled] {
     cursor: initial;
 }
 
-.actions .btn-add:not([disabled]):hover {
+.day-page .actions .btn-add:not([disabled]):hover {
     background: #d9eff9;
 }
 
-.actions .btn-edit:not([disabled]):hover {
+.day-page .actions .btn-edit:not([disabled]):hover {
     background: #c6f2ff;
 }
 
-.actions .btn-delete:not([disabled]):hover {
+.day-page .actions .btn-delete:not([disabled]):hover {
     background: #ff9f9f;
 }
 
-.actions .btn-complete:not([disabled]):hover {
+.day-page .actions .btn-complete:not([disabled]):hover {
     background: #e4fac2;
 }

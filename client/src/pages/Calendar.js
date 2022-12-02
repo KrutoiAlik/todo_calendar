@@ -102,7 +102,7 @@ export default function Calendar() {
     }, [currentDate]);
 
     return (
-        <div className='calendar'>
+        <div className='calendar-page'>
             <Spinner show={isLoading}/>
             {!isLoading &&
                 <CalendarContent days={daysRef.current}
