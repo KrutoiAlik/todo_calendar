@@ -45,18 +45,26 @@ export default function Task() {
                     <fieldset disabled>
                         <div className='field-group'>
                             <label htmlFor='taskTitle'>Title</label>
-                            <input id='taskTitle' className="task__field" type='text' value={task.title}/>
+                            <span id='taskTitle' className="task__field">{task.title}</span>
                         </div>
                         <div className='field-group'>
+                            {/*text area?*/}
                             <label htmlFor='taskDescription'>Description</label>
-                            <p id='taskDescription' className="task__field">{task.description}</p>
+                            <span id='taskDescription' className="task__field">{task.description}</span>
                         </div>
                         <div className='field-group'>
                             <label htmlFor='taskStatus'>Status</label>
-                            <input id='taskStatus' className="task__field" type='text' value={getStatusForLayout()}/>
+                            <span id='taskStatus' className="task__field">{getStatusForLayout()}</span>
                         </div>
                     </fieldset>
                 </form>
+            </div>
+
+            <div className='task__attachments'>
+                <fieldset>
+                    <label htmlFor="taskAttachments">Attachments</label>
+                    <input id="taskAttachments" type='file'/>
+                </fieldset>
             </div>
         </div>
     );

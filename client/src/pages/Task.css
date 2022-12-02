@@ -19,13 +19,21 @@
     font-weight: 500;
     display: inline-block;
     width: 100px;
-    background: #eae9e9;
     padding: 5px 10px;
+}
+
+.task .task__fields fieldset label {
     text-align: right;
+    background: #eae9e9;
+}
+
+.task__attachments label {
+    background: initial;
 }
 
 .task fieldset[disabled] .task__field {
     border: 0;
     background: inherit;
     padding: 5px 10px;
+    font-size: 14px;
 }

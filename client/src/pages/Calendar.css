@@ -1,8 +1,11 @@
 .calendar {
     display: flex;
     justify-content: center;
-    min-width: 1800px;
+    min-width: 1200px;
+    margin-top: 20px;
     padding: 20px;
+    background: white;
+    border-radius: 10px;
 }
 
 .calendar__data {
