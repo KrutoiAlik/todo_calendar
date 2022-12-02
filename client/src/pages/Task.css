@@ -1,0 +1,31 @@
+.task {
+    text-align: initial;
+    width: 1400px;
+    height: calc(100vh - 54px);
+}
+
+.task .task__header {
+    font-size: 22px;
+    opacity: 0.7;
+}
+
+.task fieldset {
+    border: none;
+    display: grid;
+}
+
+.task fieldset label {
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    width: 100px;
+    background: #eae9e9;
+    padding: 5px 10px;
+    text-align: right;
+}
+
+.task fieldset[disabled] .task__field {
+    border: 0;
+    background: inherit;
+    padding: 5px 10px;
+}

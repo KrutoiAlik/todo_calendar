@@ -27,7 +27,7 @@ export default function Day(props) {
         const miniTasks = [];
 
         for (let i = 0; i < miniTasksSize; i++) {
-            miniTasks.push(<div key={i} className='task'>{props.tasks[i].title}</div>);
+            miniTasks.push(<div key={i} className='task-cmp'>{props.tasks[i].title}</div>);
         }
 
         return miniTasks;

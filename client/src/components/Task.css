@@ -1,4 +1,4 @@
-.task {
+.task-cmp {
     margin: 5px;
     padding: 10px 20px;
     background: #d9eff9;
@@ -6,11 +6,11 @@
     font-size: 14px;
 }
 
-.task.task-completed {
+.task-cmp.task-completed {
     background: #c6ffda;
 }
 
-.task .task__title span {
+.task-cmp .task__title span {
     cursor: pointer;
 }
 

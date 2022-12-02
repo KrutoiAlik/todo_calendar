@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import RequestService from "../services/RequestService";
 import {useParams} from "react-router-dom";
+import './Task.css';
 
 export default function Task() {
 
@@ -21,7 +22,42 @@ export default function Task() {
         fetchTask();
     }, [])
 
+    const getStatusForLayout = () => {
+
+        if (!task.status) {
+            return '';
+        }
+
+        const statusCharacters = task.status.split('');
+        statusCharacters[0] = statusCharacters[0].toUpperCase();
+
+        return statusCharacters.join('');
+    }
+
     return (
-        <div>{task.title}</div>
+        <div className='task'>
+            <div className='task__header'>
+                <h3>{task.title}</h3>
+            </div>
+
+            <div className='task__fields'>
+                <form>
+                    <fieldset disabled>
+                        <div className='field-group'>
+                            <label htmlFor='taskTitle'>Title</label>
+                            <input id='taskTitle' className="task__field" type='text' value={task.title}/>
+                        </div>
+                        <div className='field-group'>
+                            <label htmlFor='taskDescription'>Description</label>
+                            <p id='taskDescription' className="task__field">{task.description}</p>
+                        </div>
+                        <div className='field-group'>
+                            <label htmlFor='taskStatus'>Status</label>
+                            <input id='taskStatus' className="task__field" type='text' value={getStatusForLayout()}/>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
     );
 }

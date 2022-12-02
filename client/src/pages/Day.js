@@ -155,8 +155,9 @@ export default function Day() {
                                           date={dateObj}
                                           task={modalView.current !== 'add' ? selectedTaskObjects()[0] : undefined}
                                           tasks={selectedTaskObjects()}
-            />}
+            />
             }
+
         </div>
     );
 

@@ -58,7 +58,7 @@
     cursor: pointer;
 }
 
-.tasks .task {
+.tasks .task-cmp {
     margin: 5px;
     padding: 2px;
     background: #d9eff9;
