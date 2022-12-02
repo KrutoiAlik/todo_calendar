@@ -13,7 +13,8 @@ export default function Task() {
             url: `http://localhost:5000/task/${id}`,
             userId: '1'
         });
-        setTask(response);
+
+        setTask(response && response.length !== 0 ? response[0] : undefined);
     }
 
     useEffect(() => {

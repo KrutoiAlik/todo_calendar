@@ -6,6 +6,14 @@
     font-size: 14px;
 }
 
+.task.task-completed {
+    background: #c6ffda;
+}
+
 .task .task__title span {
     cursor: pointer;
+}
+
+.task-completed .task__title span , .task-completed p {
+    text-decoration: line-through;
 }

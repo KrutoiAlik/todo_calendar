@@ -11,8 +11,8 @@ export default function Task(props) {
     }
 
     return (
-        <div className='task'>
-            <h3 className='task__title'>
+        <div className={`task ${props.status === 'complete' ? 'task-completed' : ''}`}>
+            <h3 className={`task__title`}>
                 <input type='checkbox' onChange={(e) => props.handleCheck(props.id, e.target.checked)}/>
                 <span onClick={toTaskDetailPage}>
                     {props.title}

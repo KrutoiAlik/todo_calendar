@@ -16,7 +16,7 @@ class TaskService extends BasicService {
     }
 
     public async getTasks(params: any) {
-        return await Dao.db_all(`SELECT id, title, description, userId, task_date 
+        return await Dao.db_all(`SELECT id, title, description, userId, task_date, status 
                                         FROM tasks
                                         WHERE ${Utils.generateWhereConditionsString(params, 'and')}`);
     }
@@ -45,7 +45,7 @@ class TaskService extends BasicService {
     }
 
     public async deleteTasks(taskIds: string[]) {
-        return await Dao.db_run(`DELETE FROM tasks VALUES id IN ('${taskIds.join(',')}')`);
+        return await Dao.db_run(`DELETE FROM tasks WHERE id IN ('${taskIds.join(',')}')`);
     }
 
     async get(params: any, res: ServerResponse) {
@@ -67,7 +67,7 @@ class TaskService extends BasicService {
 
         if (!tasks.length) {
             res.writeHead(404);
-            res.end(`No task found`);
+            res.end(`{"message": "No task found"}`);
             return res;
         }
 
@@ -94,12 +94,12 @@ class TaskService extends BasicService {
         const tasks = params.data.tasks.map((task: Task) => ({...task, userId: params.userId}));
 
         try {
-            let updatedTasks = await this.updateTasks(tasks);
+            const updatedTasks = await this.updateTasks(tasks);
 
             console.log({updatedTasks})
 
-            res.writeHead(204, 'Updated successfully');
-            res.end(JSON.stringify({updatedTasks}));
+            res.writeHead(200, 'Updated successfully');
+            res.end(JSON.stringify(updatedTasks));
         } catch (err: any) {
             res.writeHead(409);
             res.end('Insert is failed: ' + err.message);

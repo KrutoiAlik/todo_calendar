@@ -31,35 +31,41 @@ export default function TaskModal(props) {
             case 'add':
                 service.doPost({
                     url: `http://localhost:5000/task?task_date=${utcDate.toISOString().substring(0, 10)}`,
-                    body: task
+                    body: {
+                        tasks: [task]
+                    }
                 }).then((data) => console.log({data})).finally(() => props.hideModal());
                 break;
             case 'edit':
                 service.doPut({
                     url: `http://localhost:5000/task`,
-                    body: task
-                });
+                    body: {
+                        tasks: [task]
+                    }
+                }).then((data) => console.log({data})).finally(() => props.hideModal());
                 break;
             case 'delete':
-                service.doPut({
-                    url: `http://localhost:5000/task`,
-                    body: {
-                        ids: props.tasks.map(task => task.id)
-                    }
-                });
-                break;
-            case 'complete':
                 service.doDelete({
                     url: `http://localhost:5000/task`,
                     body: {
                         ids: props.tasks.map(task => task.id)
                     }
-                });
+                }).then((data) => console.log({data})).finally(() => props.hideModal());
+                break;
+            case 'complete':
+                service.doPut({
+                    url: `http://localhost:5000/task`,
+                    body: {
+                        tasks: props.tasks.map(task => ({id: task.id, status: 'complete'}))
+                    }
+                }).then((data) => console.log({data})).finally(() => props.hideModal());
                 break;
         }
     }
 
     const getBody = () => {
+
+        console.log({date: task})
 
         switch (props.view) {
             case 'add':
